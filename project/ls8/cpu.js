@@ -1,22 +1,3 @@
-const fs = require('fs');
-
-const argv = process.argv.slice(1);
-
-const filename = argv[1];
-console.log(filename);
-if (!filename.endsWith('.ls8')) {
-  console.log('usage: [filename].ls8');
-  process.exit(1);
-}
-
-const filedata = fs.readFileSync(filename, 'utf8');
-
-let lines = filedata.toString().split('\n');
-let newLines = lines.map((line, index) => {
-  if (index < 2) return null;
-  return line.slice(0, 7);
-});
-
 /**
  * LS-8 v2.0 emulator skeleton code
  */
@@ -105,7 +86,7 @@ class CPU {
     const operandB = this.ram.read(this.PC + 2);
 
     // !!! IMPLEMENT ME
-    const nextPC = parseInt(IR.toString(2)[0] + IR.toString(2)[1], 2);
+    this.PC += 1 + (IR >> 6);
     const aluOp = parseInt(IR.toString(2)[2], 2) ? true : false;
 
     // Execute the instruction. Perform the actions for the instruction as
@@ -114,21 +95,19 @@ class CPU {
     switch (IR) {
       case LDI:
         this.reg[operandA] = operandB;
-        this.PC += 3;
         break;
       case PRN:
         console.log(this.reg[operandA], 'PRN log');
-        this.PC += 2;
         break;
       case MUL:
         this.reg[operandA] = this.reg[operandA] * this.reg[operandB];
-        this.PC += 3;
         break;
       case HLT:
         this.stopClock();
         console.log('Operation completed Successfully!');
         break;
       default:
+        console.log(this.PC);
         this.stopClock();
         console.log('DANGER WILL ROBINSON!');
     }
