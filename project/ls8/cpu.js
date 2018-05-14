@@ -1,3 +1,22 @@
+const fs = require('fs');
+
+const argv = process.argv.slice(1);
+
+const filename = argv[1];
+console.log(filename);
+if (!filename.endsWith('.ls8')) {
+  console.log('usage: [filename].ls8');
+  process.exit(1);
+}
+
+const filedata = fs.readFileSync(filename, 'utf8');
+
+let lines = filedata.toString().split('\n');
+let newLines = lines.map((line, index) => {
+  if (index < 2) return null;
+  return line.slice(0, 7);
+});
+
 /**
  * LS-8 v2.0 emulator skeleton code
  */
