@@ -6,6 +6,8 @@ const LDI = 0b10011001;
 const PRN = 0b01000011;
 const MUL = 0b10101010;
 const HLT = 0b00000001;
+const PUSH = 0b01001101;
+const POP = 0b01001100;
 
 /**
  * Class for simulating a simple Computer (CPU & memory)
@@ -105,6 +107,10 @@ class CPU {
       case HLT:
         this.stopClock();
         console.log('Operation completed Successfully!');
+        break;
+      case PUSH:
+        break;
+      case POP:
         break;
       default:
         console.log(this.PC);
