@@ -2,23 +2,22 @@ const fs = require('fs');
 
 const argv = process.argv.slice(1);
 
-const filename = argv[1];
-console.log(filename);
-if (!filename.endsWith('.ls8')) {
-  console.log('usage: [filename].ls8');
+let filename = argv[1];
+if (!filename) {
+  console.log('usage: [filename]');
   process.exit(1);
+}
+if (!filename.endsWith('.ls8')) {
+  filename = filename + '.ls8';
 }
 
 const filedata = fs.readFileSync(filename, 'utf8');
 
-let lines = filedata.toString().split('\n');
-let newLines = lines.map((line, index) => {
-  if (index < 2) return null;
-  return line.slice(0, 7);
-});
-
-newLines.shift();
-newLines.shift();
+const lines = filedata
+  .split('\n')
+  .filter(line => line.startsWith('0') || line.startsWith('1'))
+  .map(line => line.split('#'))
+  .map(line => line[0].trim());
 
 const RAM = require('./ram');
 const CPU = require('./cpu');
@@ -31,8 +30,7 @@ const CPU = require('./cpu');
 function loadMemory() {
   // Hardcoded program to print the number 8 on the console
 
-  console.log(newLines, 'newLines');
-  const program = newLines;
+  const program = lines;
   // [
   //   // print8.ls8
   //   '10011001', // LDI R0,8  Store 8 into R0
