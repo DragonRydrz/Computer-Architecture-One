@@ -109,7 +109,7 @@ class CPU {
       default:
         console.log(this.PC);
         this.stopClock();
-        console.log('DANGER WILL ROBINSON!');
+        console.log(`Unknown instruction at: ${this.PC}: ${IR.toString(2)}`);
     }
 
     // !!! IMPLEMENT ME
