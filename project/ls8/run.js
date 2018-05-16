@@ -21,7 +21,7 @@ const lines = filedata
 
 const RAM = require('./ram');
 const CPU = require('./cpu');
-
+// console.log(lines);
 /**
  * Load an LS8 program into memory
  *
@@ -31,6 +31,9 @@ function loadMemory() {
   // Hardcoded program to print the number 8 on the console
 
   const program = lines;
+  // program.forEach((item, index) => {
+  //   console.log(index, item);
+  // });
   // [
   //   // print8.ls8
   //   '10011001', // LDI R0,8  Store 8 into R0
@@ -40,6 +43,7 @@ function loadMemory() {
   //   '00000000',
   //   '00000001', // HLT       Halt and quit
   // ];
+  // console.log(program);
 
   // Load the program into the CPU's memory a byte at a time
   for (let i = 0; i < program.length; i++) {

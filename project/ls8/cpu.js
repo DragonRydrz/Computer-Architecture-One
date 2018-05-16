@@ -8,6 +8,10 @@ const MUL = 0b10101010;
 const HLT = 0b00000001;
 const PUSH = 0b01001101;
 const POP = 0b01001100;
+const CALL = 0b01001000;
+const JMP = 0b01010000;
+const ADD = 0b10101000;
+const RET = 0b00001001;
 
 /**
  * Class for simulating a simple Computer (CPU & memory)
@@ -22,6 +26,8 @@ class CPU {
     this.reg = new Array(8).fill(0); // General-purpose registers R0-R7
 
     // Special-purpose registers
+    this.reg[7] = 0xf4;
+
     this.PC = 0; // Program Counter
   }
 
@@ -75,6 +81,7 @@ class CPU {
     // index into memory of the instruction that's about to be executed
     // right now.)
     const IR = this.ram.read(this.PC);
+    // let SP = this.reg[7];
 
     // !!! IMPLEMENT ME
 
@@ -88,8 +95,9 @@ class CPU {
     const operandB = this.ram.read(this.PC + 2);
 
     // !!! IMPLEMENT ME
-    this.PC += 1 + (IR >> 6);
-    const aluOp = parseInt(IR.toString(2)[2], 2) ? true : false;
+    if (IR !== JMP && IR !== CALL && IR !== RET) {
+      this.PC += 1 + (IR >> 6);
+    }
 
     // Execute the instruction. Perform the actions for the instruction as
     // outlined in the LS-8 spec.
@@ -109,13 +117,35 @@ class CPU {
         console.log('Operation completed Successfully!');
         break;
       case PUSH:
+        this.reg[7]--;
+        this.poke(this.reg[7], this.reg[operandA]);
         break;
       case POP:
+        this.reg[operandA] = this.ram.read(this.reg[7]);
+        ++this.reg[7];
+        break;
+      case CALL:
+        this.reg[7]--;
+        this.poke(this.reg[7], this.PC + 2);
+        this.PC = this.reg[operandA];
+        break;
+      case JMP:
+        this.PC = this.reg[operandA];
+
+        break;
+      case ADD:
+        this.reg[operandA] += this.reg[operandB];
+        break;
+
+      case RET:
+        this.PC = this.ram.read(this.reg[7]);
+        ++this.reg[7];
         break;
       default:
-        console.log(this.PC);
         this.stopClock();
-        console.log(`Unknown instruction at: ${this.PC}: ${IR.toString(2)}`);
+        console.log(
+          `Unknown instruction at: ${this.PC - 1}: ${IR.toString(2)}`
+        );
     }
 
     // !!! IMPLEMENT ME
